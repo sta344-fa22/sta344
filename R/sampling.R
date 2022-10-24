@@ -14,7 +14,7 @@
 #'
 rmvnorm = function(n, mu=rep(0, nrow(Sigma)), Sigma, diag_adj = 1e-6) {
   diag(Sigma) = diag(Sigma) + diag_adj
-  mu %*% matrix(1, ncol=n) + t(chol(Sigma)) %*% matrix(rnorm(n*nrow(Sigma)), ncol=n)
+  mu %*% matrix(1, ncol=n) + t(chol(Sigma)) %*% matrix(stats::rnorm(n*nrow(Sigma)), ncol=n)
 }
 
 #' @title GP conditional predictions
@@ -48,7 +48,7 @@ cond_predict = function(x_pred, x, cov, ..., reps=1000, diag_adj = 1e-6) {
   diag(cov_p) = diag(cov_p) + diag_adj
 
   cond_cov = cov_p - cov_po %*% solve(cov_o, t(cov_po))
-  cond_mu  = cov_po %*% solve(cov_o) %*% (d$y)
+  cond_mu  = cov_po %*% solve(cov_o) %*% (x)
 
-  cond_mu %*% matrix(1, ncol=reps) + t(chol(cond_cov)) %*% matrix(rnorm(nrow(d_pred)*reps), ncol=reps)
+  cond_mu %*% matrix(1, ncol=reps) + t(chol(cond_cov)) %*% matrix(stats::rnorm(nrow(x_pred)*reps), ncol=reps)
 }

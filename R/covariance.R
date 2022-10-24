@@ -63,7 +63,6 @@ sphere_cov = function(d, sigma2=1, l=1) {
   ifelse(d > 1/l, 0, sigma2*(1 - 1.5*d*l + 0.5*(d*l)^3))
 }
 
-#' @rdname covariance_functions
 #' @export
 linear_cov   = function(x1, x2, sigma2_b=1, sigma2_v=1, c=0) {
   if (!missing(x2)) {

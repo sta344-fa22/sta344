@@ -32,7 +32,55 @@ build_coord_mat = function(data, coords, ncol=2) {
   pad_coords_mat(coords, ncol)
 }
 
+
+#' @title Fit a gplm model (spBayes spLM)
+#'
+#' @description A more user friendly (and limited) wrapper around the spBayes' spLM
+#' model.
+#'
+#' @param formula A formula object. A symbolic description of the model to be fitted.
+#' @param data A data.frame object containing data of all variables used in the model.
+#' @param coords Either a numeric matrix of coordinates or quoted column names from `data` to use for distance calculations.
+#' @param chains Numeric. Number of MCMC chains to fit.
+#' @param n_batch Numeric. Number of adaptive batches to use when fitting each chain.
+#' @param batch_len Numeric. Number of iterations per batch.
+#' @param cov_model Character. Name of the covariance model to use, supported values are:
+#' "exponential", "matern", "spherical", and "gaussian"
+#' @param starting Named list of parameter starting values, allowed names: `beta`, `sigma.sq`, `tau.sq`, `phi`, and `nu`.
+#' @param prior Named list of priors, each value is a vector of prior hyperparameter values. See [spBayes::spLM()] for details.
+#' @param tuning Names list of variance values for the MH sampler.
+#' @param burnin_frac Numeric. Proportion of iterations to discard as burnin.
+#' @param accept_rate Numeric. Desired acceptance rate used by the adaptive MCMC algorithm
+#' @param thin Numeric. Amount of thinning to apply to posterior samples.
+#' @param verbose Logical. Should verbose output (sampling progress) be printed.
+#'
+#' @examples
+#' m = gplm(
+#'   avg_temp~1, data = avg_temp, coords = "week",
+#'   starting=list(
+#'     "phi"=sqrt(3)/4, "sigma.sq"=1, "tau.sq"=1
+#'   ),
+#'   tuning=list(
+#'     "phi"=1, "sigma.sq"=1, "tau.sq"=1
+#'   ),
+#'   priors=list(
+#'     "phi.unif"=c(sqrt(3)/52, sqrt(3)/1),
+#'     "sigma.sq.ig"=c(2, 1),
+#'     "tau.sq.ig"=c(2, 1)
+#'   ),
+#'   thin=10,
+#'   n_batch = 100,
+#'   batch_len = 50
+#' )
+#'
+#' newdata = data.frame(
+#'   week = seq(0,3.5*52) |> jitter()
+#' )
+#'
+#' (pred = predict(m, newdata=newdata, coords = "week"))
+#'
 #' @export
+#'
 gplm = function(
     formula,
     data,
@@ -40,7 +88,7 @@ gplm = function(
     chains = 4,
     n_batch = 200,
     batch_len = 100,
-    cov_model = "gaussian",
+    cov_model = c("gaussian", "exponential", "matern", "spherical"),
     starting = list(
       "phi"=sqrt(3)/1, "sigma.sq"=1, "tau.sq"=1
     ),
@@ -62,6 +110,8 @@ gplm = function(
   burnin = floor(n_samples*burnin_frac + 1)
 
   coords = build_coord_mat(data, coords)
+
+  cov_model = match.arg(cov_model)
 
   l = lapply(
     seq_len(chains),
@@ -109,25 +159,26 @@ gplm = function(
 }
 
 
-#' @export
+#' @exportS3Method
 predict.gplm_fit = function(
-    gplm,
+    object,
     newdata,
     coords,
     verbose = FALSE,
-    n_report = 100
+    n_report = 100,
+    ...
 ) {
-  args = gplm$args
+  args = object$args
 
   coords = build_coord_mat(newdata, coords, ncol=2)
 
   lapply(
-    gplm$models,
+    object$models,
     function(m) {
       n_y = nrow(newdata)
 
-      covars = model.matrix(
-        update(gplm$args$formula, NULL ~ .),
+      covars = stats::model.matrix(
+        stats::update(object$args$formula, NULL ~ .),
         newdata
       )
 

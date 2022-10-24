@@ -1,8 +1,8 @@
 
 
 crps_test = function(post,obs,n_pts = 1e6) {
-  F_post = ecdf(post)
-  F_obs = ecdf(obs)
+  F_post = stats::ecdf(post)
+  F_obs = stats::ecdf(obs)
 
   d = c(obs,post)
   s = seq(min(d),max(d),len=n_pts)
@@ -34,7 +34,7 @@ calc_crps = function(x, obs) {
   if (is.na(i))
     i = n
 
-  Fx = ecdf(x)(x)
+  Fx = stats::ecdf(x)(x)
 
   widths = x[-1]-x[-n]
 

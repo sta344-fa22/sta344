@@ -10,7 +10,6 @@
 \alias{periodic_cov}
 \alias{matern_cov}
 \alias{sphere_cov}
-\alias{linear_cov}
 \title{Covariance functions}
 \usage{
 nugget_cov(d, sigma2 = 1)
@@ -28,8 +27,6 @@ periodic_cov(d, sigma2 = 1, l = 1, per = 1)
 matern_cov(d, sigma2 = 1, l = 1, nu = 1/2)
 
 sphere_cov(d, sigma2 = 1, l = 1)
-
-linear_cov(x1, x2, sigma2_b = 1, sigma2_v = 1, c = 0)
 }
 \arguments{
 \item{d}{Distance matrix}

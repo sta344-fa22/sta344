@@ -28,21 +28,21 @@ pow_exp_sv = function(d, sigma2=1, l=1, p=2, sigma2_w=0) {
 
 
 dist_mat = function(d) {
-  as.matrix(dist(d))
+  as.matrix(stats::dist(d))
 }
 
 dist_long = function(d) {
   d = as.matrix(d)
   d[upper.tri(d, diag = TRUE)] = NA
 
-  expand_grid(
+  tidyr::expand_grid(
     i=1:nrow(d),
     j=1:nrow(d)
-  ) %>%
-    mutate(
+  ) |>
+    dplyr::mutate(
       dist = c(d)
-    ) %>%
-    filter(!is.na(dist))
+    ) |>
+    dplyr::filter(!is.na(dist))
 }
 
 bin = function(df, var, binwidth, start = NULL, end = NULL) {
@@ -60,12 +60,12 @@ bin = function(df, var, binwidth, start = NULL, end = NULL) {
 
   bins = seq(start, end, by = binwidth)
 
-  df %>%
-    mutate(
+  df |>
+    dplyr::mutate(
       bins = cut(.data[[var]], breaks = bins),
       bin_mid = .data[[var]] - .data[[var]] %% binwidth + binwidth/2
-    ) %>%
-    group_by(bins)
+    ) |>
+    dplyr::group_by(bins)
 }
 
 #' @title Estimate the empirical semivariogram
@@ -87,9 +87,9 @@ emp_semivariogram = function(d, y, x, bin=FALSE, binwidth, range_max=NULL) {
   y_col = as.character(substitute(y))
   x_col = as.character(substitute(x))
 
-  d = d[[x_col]] %>%
-    dist() %>%
-    dist_long() %>%
+  d = d[[x_col]] |>
+    dist() |>
+    dist_long() |>
     mutate(
       y_i = d[[y_col]][i],
       y_j = d[[y_col]][j]
@@ -100,20 +100,20 @@ emp_semivariogram = function(d, y, x, bin=FALSE, binwidth, range_max=NULL) {
 
 
   if (bin) {
-    d = d %>% bin(dist, binwidth = binwidth, start = 0)
+    d = d |> bin(dist, binwidth = binwidth, start = 0)
   } else {
-    d = d %>% mutate(bin_mid = dist) %>% rowwise()
+    d = d |> dplyr::mutate(bin_mid = dist) |> dplyr::rowwise()
   }
 
-  d = d %>%
-    summarize(
+  d = d |>
+    dplyr::summarize(
       gamma = sum( (y_i - y_j)^2 / (2*n()) ),
       d = mean(bin_mid),
       n = n()
     )
 
   if (!missing(range_max))
-    d = d %>% filter(d < range_max)
+    d = d |> dplyr::filter(d < range_max)
 
   d
 }
