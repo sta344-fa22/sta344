@@ -1,6 +1,6 @@
 #' @exportS3Method
 plot.gplm_fit = function(x, combo = c("dens", "trace"), ...) {
-  bayesplot::mcmc_combo(x$mcmc, combo = combo, ...)
+  print(bayesplot::mcmc_combo(x$mcmc, combo = combo, ...))
 }
 
 #' @exportS3Method

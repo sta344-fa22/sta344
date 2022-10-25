@@ -98,22 +98,25 @@ emp_semivariogram = function(d, y, x, bin=FALSE, binwidth, range_max=NULL) {
   if (is.null(range_max))
     range_max = max(d$dist, na.rm=TRUE)/3
 
-
-  if (bin) {
-    d = d |> bin(dist, binwidth = binwidth, start = 0)
-  } else {
-    d = d |> dplyr::mutate(bin_mid = dist) |> dplyr::rowwise()
+  if (!bin) {
+    return( d |> dplyr::mutate(bin_mid = dist) |> dplyr::rowwise() )
   }
 
-  d = d |>
-    dplyr::summarize(
-      gamma = sum( (y_i - y_j)^2 / (2*n()) ),
-      d = mean(bin_mid),
-      n = n()
-    )
+  purrr::map_dfr(
+    binwidth,
+    function(bw) {
 
-  if (!missing(range_max))
-    d = d |> dplyr::filter(d < range_max)
+      res = d |>
+        bin(dist, binwidth = bw, start = 0) |>
+        dplyr::summarize(
+          gamma = sum( (y_i - y_j)^2 / (2*n()) ),
+          d = mean(bin_mid),
+          n = n()
+        ) |>
+        dplyr::filter(d < range_max)
 
-  d
+      res |>
+        mutate(bw = bw)
+    }
+  )
 }
