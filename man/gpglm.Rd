@@ -18,9 +18,7 @@ gpglm(
   priors = list(beta.Normal = list(0, 1), phi.unif = c(sqrt(3)/52, sqrt(3)/1),
     sigma.sq.ig = c(2, 1)),
   tuning = list(beta = 1, phi = 1, sigma.sq = 1),
-  burnin_frac = 0.5,
   accept_rate = 0.43,
-  thin = 1,
   verbose = FALSE
 )
 }
@@ -50,11 +48,7 @@ Weights correspond to number of trials and offset for each location for the bino
 
 \item{tuning}{Names list of variance values for the MH sampler.}
 
-\item{burnin_frac}{Numeric. Proportion of iterations to discard as burnin.}
-
 \item{accept_rate}{Numeric. Desired acceptance rate used by the adaptive MCMC algorithm}
-
-\item{thin}{Numeric. Amount of thinning to apply to posterior samples.}
 
 \item{verbose}{Logical. Should verbose output (sampling progress) be printed.}
 

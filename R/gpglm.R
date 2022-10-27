@@ -30,11 +30,7 @@
 #'
 #' @param tuning Names list of variance values for the MH sampler.
 #'
-#' @param burnin_frac Numeric. Proportion of iterations to discard as burnin.
-#'
 #' @param accept_rate Numeric. Desired acceptance rate used by the adaptive MCMC algorithm
-#'
-#' @param thin Numeric. Amount of thinning to apply to posterior samples.
 #'
 #' @param verbose Logical. Should verbose output (sampling progress) be printed.
 #'
@@ -109,9 +105,7 @@ gpglm = function(
     tuning = list(
       "beta"=1, "phi"=1, "sigma.sq"=1
     ),
-    burnin_frac = 0.5,
     accept_rate = 0.43,
-    thin = 1,
     verbose = FALSE
 ) {
   args = as.list(environment())
@@ -170,9 +164,14 @@ predict.gpglm_fit = function(
     coords,
     verbose = FALSE,
     thin=1,
+    burnin_frac = 0.5,
     ...
 ) {
   args = object$args
+
+  end = nrow(object$models[[1]]$mcmc)
+  start = floor(end * burnin_frac) + 1
+
 
   coords = build_coord_mat(newdata, coords, ncol=2)
 
@@ -192,6 +191,8 @@ predict.gpglm_fit = function(
         pred.covars = covars,
         verbose = verbose,
         thin = thin,
+        start = start,
+        end = end,
         ...
       )
 
