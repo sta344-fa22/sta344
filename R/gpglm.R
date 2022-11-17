@@ -20,6 +20,7 @@
 #' @param tuning Names list of variance values for the MH sampler.
 #' @param burnin_frac Numeric. Proportion of iterations to discard as burnin.
 #' @param accept_rate Numeric. Desired acceptance rate used by the adaptive MCMC algorithm
+#' @param n_report Numeric. The interval to report Metropolis sampler acceptance and MCMC progress.
 #' @param verbose Logical. Should verbose output (sampling progress) be printed.
 #'
 #' @examples
@@ -95,6 +96,7 @@ gpglm = function(
     ),
     burnin_frac = 0.5,
     accept_rate = 0.43,
+    n_report = 50,
     verbose = FALSE
 ) {
   args = as.list(environment())
@@ -123,7 +125,8 @@ gpglm = function(
           "n.batch"=n_batch, "batch.length"=batch_len, "accept.rate"=accept_rate
         ),
         cov.model = cov_model,
-        verbose = verbose
+        verbose = verbose,
+        n.report = n_report
       )
 
       list(

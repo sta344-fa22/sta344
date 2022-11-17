@@ -55,6 +55,7 @@ build_coord_mat = function(data, coords, ncol=2) {
 #' @param burnin_frac Numeric. Proportion of iterations to discard as burnin.
 #' @param accept_rate Numeric. Desired acceptance rate used by the adaptive MCMC algorithm
 #' @param thin Numeric. Amount of thinning to apply to posterior samples.
+#' @param n_report Numeric. The interval to report Metropolis sampler acceptance and MCMC progress.
 #' @param verbose Logical. Should verbose output (sampling progress) be printed.
 #'
 #' @examples
@@ -106,6 +107,7 @@ gplm = function(
     burnin_frac = 0.5,
     accept_rate = 0.43,
     thin = 1,
+    n_report = 50,
     verbose = FALSE
 ) {
   args = as.list(environment())
@@ -132,6 +134,7 @@ gplm = function(
           "n.batch"=n_batch, "batch.length"=batch_len, "accept.rate"=accept_rate
         ),
         cov.model = cov_model,
+        n.report = n_report,
         verbose = verbose
       )
 

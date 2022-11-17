@@ -19,6 +19,7 @@ gplm(
   burnin_frac = 0.5,
   accept_rate = 0.43,
   thin = 1,
+  n_report = 50,
   verbose = FALSE
 )
 }
@@ -47,6 +48,8 @@ gplm(
 \item{accept_rate}{Numeric. Desired acceptance rate used by the adaptive MCMC algorithm}
 
 \item{thin}{Numeric. Amount of thinning to apply to posterior samples.}
+
+\item{n_report}{Numeric. The interval to report Metropolis sampler acceptance and MCMC progress.}
 
 \item{verbose}{Logical. Should verbose output (sampling progress) be printed.}
 
