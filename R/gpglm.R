@@ -4,34 +4,22 @@
 #' model.
 #'
 #' @param formula A formula object. A symbolic description of the model to be fitted.
-#'
 #' @param family Currently only supports binomial and poisson data using the logit
 #' and log link functions, respectively.
-#'
 #' @param weights An optional vector of weights to be used in the fitting process.
 #' Weights correspond to number of trials and offset for each location for the binomial and poisson family, respectively.
-#'
 #' @param data A data.frame object containing data of all variables used in the model.
-#'
 #' @param coords Either a numeric matrix of coordinates or quoted column names from `data` to use for distance calculations.
-#'
 #' @param chains Numeric. Number of MCMC chains to fit.
-#'
 #' @param n_batch Numeric. Number of adaptive batches to use when fitting each chain.
-#'
 #' @param batch_len Numeric. Number of iterations per batch.
-#'
 #' @param cov_model Character. Name of the covariance model to use, supported values are:
 #' "exponential", "matern", "spherical", and "gaussian"
-#'
 #' @param starting Named list of parameter starting values, allowed names: `beta`, `sigma.sq`, `tau.sq`, `phi`, and `nu`.
-#'
 #' @param prior Named list of priors, each value is a vector of prior hyperparameter values. See [spBayes::spGLM()] for details.
-#'
 #' @param tuning Names list of variance values for the MH sampler.
-#'
+#' @param burnin_frac Numeric. Proportion of iterations to discard as burnin.
 #' @param accept_rate Numeric. Desired acceptance rate used by the adaptive MCMC algorithm
-#'
 #' @param verbose Logical. Should verbose output (sampling progress) be printed.
 #'
 #' @examples
@@ -105,6 +93,7 @@ gpglm = function(
     tuning = list(
       "beta"=1, "phi"=1, "sigma.sq"=1
     ),
+    burnin_frac = 0.5,
     accept_rate = 0.43,
     verbose = FALSE
 ) {

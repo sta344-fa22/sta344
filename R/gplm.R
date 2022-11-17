@@ -23,11 +23,14 @@ build_coord_mat = function(data, coords, ncol=2) {
       # Assume select syntax for coords
       coords = data |>
         dplyr::select(dplyr::all_of(coords)) |>
+        dplyr::mutate(dplyr::across(everything(), as.numeric)) |>
         as.matrix()
     }
   }
 
   storage.mode(coords) = "double"
+
+  stopifnot(all(!is.na(coords)))
 
   pad_coords_mat(coords, ncol)
 }
