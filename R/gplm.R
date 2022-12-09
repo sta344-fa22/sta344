@@ -280,8 +280,12 @@ sp_predict_gplm = function(
 
 
 #' @exportS3Method
-plot.gplm_fit = function(x, combo = c("dens", "trace"), ...) {
-  print(bayesplot::mcmc_combo(x$mcmc, combo = combo, ...))
+plot.gplm_fit = function(x, combo = c("dens", "trace"), ..., vars=NULL) {
+  mcmc = x$mcmc
+  if (!is.null(vars))
+    mcmc = mcmc[,vars]
+
+  print(bayesplot::mcmc_combo(mcmc, combo = combo, ...))
 }
 
 #' @exportS3Method

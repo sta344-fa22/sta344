@@ -35,8 +35,8 @@ sq_exp_cov = function(d, sigma2=1, l=1, sigma2_w=0) {
 
 #' @rdname covariance_functions
 #' @export
-pow_exp_cov = function(d, sigma2=1, l=1, p=2) {
-  sigma2 * exp(-(abs(d)*l)^p)
+pow_exp_cov = function(d, sigma2=1, l=1, p=2, sigma2_w=0) {
+  sigma2 * exp(-(abs(d)*l)^p) + nugget_cov(d,sigma2_w)
 }
 
 #' @rdname covariance_functions
